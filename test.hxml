@@ -1,0 +1,5 @@
+-cp test
+-main Test
+-D test
+-cpp bin
+-cmd ./bin/Test
