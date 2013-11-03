@@ -45,4 +45,9 @@ class Test extends TestCase {
         assertFalse(Cson.isCRLF("\r", "a"));
         assertFalse(Cson.isCRLF("a", "a"));
     }
+    public function testIsNameSeparator() {
+        assertTrue(Cson.isNameSeparator(":"));
+        assertTrue(Cson.isNameSeparator("="));
+        assertFalse(Cson.isNameSeparator("a"));
+    }
 }
