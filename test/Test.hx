@@ -80,4 +80,12 @@ class Test extends TestCase {
         assertFalse(Cson.isEndOfBracket("("));
         assertFalse(Cson.isEndOfBracket(")"));
     }
+    public function testStringToLiteral() {
+        assertEquals(Cson.stringToLiteral(""),"");
+        assertEquals(Cson.stringToLiteral("\t"), "\\t");
+        assertEquals(Cson.stringToLiteral("a\t"), "a\\t");
+        assertEquals(Cson.stringToLiteral("a\t\t"), "a\\t\\t");
+        assertEquals(Cson.stringToLiteral("a\tb\t"), "a\\tb\\t");
+        assertEquals(Cson.stringToLiteral("\""), "\\\"");
+    }
 }
