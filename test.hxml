@@ -2,4 +2,22 @@
 -main Test
 -D test
 -cpp bin
+-cmd echo "\x1B[1mTESTING CPP...\x1B[22m"
 -cmd ./bin/Test
+
+--next
+-cp test
+-main Test
+-D test
+-js bin/test.js
+-cmd echo "\x1B[1mTESTING JS...\x1B[22m"
+-cmd node ./bin/test.js
+
+--next
+-cp test
+-main Test
+-D test
+-D neko-source
+-neko bin/test.n
+-cmd echo "\x1B[1mTESTING NEKO...\x1B[22m"
+-cmd neko ./bin/test.n
