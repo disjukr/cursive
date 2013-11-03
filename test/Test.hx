@@ -39,4 +39,10 @@ class Test extends TestCase {
         assertFalse(Cson.isWS("a"));
         assertFalse(Cson.isWS(","));
     }
+    public function testIsCRLF() {
+        assertTrue(Cson.isCRLF("\r", "\n"));
+        assertFalse(Cson.isCRLF("a", "\n"));
+        assertFalse(Cson.isCRLF("\r", "a"));
+        assertFalse(Cson.isCRLF("a", "a"));
+    }
 }
