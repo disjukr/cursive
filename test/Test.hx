@@ -50,4 +50,18 @@ class Test extends TestCase {
         assertTrue(Cson.isNameSeparator("="));
         assertFalse(Cson.isNameSeparator("a"));
     }
+    public function testIsEndOfDQuote() {
+        assertTrue(Cson.isEndOfDQuote("a", "\""));
+        assertTrue(Cson.isEndOfDQuote("\"", "\""));
+        assertFalse(Cson.isEndOfDQuote("\\", "\""));
+        assertFalse(Cson.isEndOfDQuote("a", "a"));
+        assertFalse(Cson.isEndOfDQuote("\\", "a"));
+    }
+    public function testIsEndOfSQuote() {
+        assertTrue(Cson.isEndOfSQuote("a", "\'"));
+        assertTrue(Cson.isEndOfSQuote("\'", "\'"));
+        assertFalse(Cson.isEndOfSQuote("\\", "\'"));
+        assertFalse(Cson.isEndOfSQuote("a", "a"));
+        assertFalse(Cson.isEndOfSQuote("\\", "a"));
+    }
 }
