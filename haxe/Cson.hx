@@ -62,7 +62,8 @@ class Cson {
                      .replace("\"", "\\\"");
     }
 
-    static function tokenize(text: String): Array<String> {
+    static #if test public #end function
+    tokenize(text: String): Array<String> {
         return ["TODO"];
     }
 

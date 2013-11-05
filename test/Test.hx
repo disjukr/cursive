@@ -11,6 +11,15 @@ class Test extends TestCase {
         runner.add(new Test());
         runner.run();
     }
+    inline function compareArray(a: Array<Dynamic>, b: Array<Dynamic>): Bool {
+        var eq = true;
+        if (a.length != b.length)
+            eq = false;
+        for (i in 0...a.length)
+            if (a[i] != b[i])
+                eq = false;
+        return eq;
+    }
     public function testIsName() {
         assertTrue(Cson.isName("a"));
         assertTrue(Cson.isName("A"));
@@ -87,5 +96,11 @@ class Test extends TestCase {
         assertEquals("a\\t\\t", Cson.stringToLiteral("a\t\t"));
         assertEquals("a\\tb\\t", Cson.stringToLiteral("a\tb\t"));
         assertEquals("\\\"", Cson.stringToLiteral("\""));
+    }
+    public function testTokenize() {
+        inline function assert(testValue, expected) {
+            assertTrue(compareArray(expected, Cson.tokenize(testValue)));
+        }
+        assert("true", ["true"]);
     }
 }
