@@ -60,6 +60,11 @@ class Cson {
     }
 
     static #if test public #else inline #end function
+    isBracket(char: String): Bool {
+        return isBeginOfBracket(char) || isEndOfBracket(char);
+    }
+
+    static #if test public #else inline #end function
     stringToLiteral(string: String): String {
         return string.replace("\\", "\\\\").replace(BACKSPACE, "\\b")
                      .replace(FORM_FEED, "\\f").replace("\n", "\\n")
