@@ -99,7 +99,11 @@ class Test extends TestCase {
     }
     public function testTokenize() {
         inline function assert(testValue, expected) {
-            assertTrue(compareArray(expected, Cson.tokenize(testValue)));
+            var actual = Cson.tokenize(testValue);
+            if (compareArray(expected, actual))
+                assertTrue(true);
+            else
+                assertEquals(expected, actual);
         }
         assert("true", ["true"]);
     }
