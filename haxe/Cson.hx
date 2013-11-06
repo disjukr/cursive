@@ -72,6 +72,12 @@ class Cson {
                      .replace("\"", "\\\"");
     }
 
+    static #if test public #else inline #end function
+    charAt(text: String, index: Int): String {
+        var code: Null<Int> = text.charCodeAt(index);
+        return if (code == null) null else String.fromCharCode(code);
+    }
+
     static #if test public #end function
     tokenize(text: String): Array<String> {
         return ["TODO"];
