@@ -21,24 +21,30 @@ class Test extends TestCase {
         return eq;
     }
     public function testIsName() {
-        assertTrue(Cson.isName("a"));
-        assertTrue(Cson.isName("A"));
-        assertTrue(Cson.isName("0"));
-        assertTrue(Cson.isName("9"));
-        assertFalse(Cson.isName(" "));
-        assertFalse(Cson.isName("\t"));
-        assertFalse(Cson.isName("\n"));
-        assertFalse(Cson.isName("\r"));
-        assertFalse(Cson.isName(","));
-        assertFalse(Cson.isName(":"));
-        assertFalse(Cson.isName("="));
-        assertFalse(Cson.isName("\""));
-        assertFalse(Cson.isName("\'"));
-        assertFalse(Cson.isName("["));
-        assertFalse(Cson.isName("{"));
-        assertFalse(Cson.isName("]"));
-        assertFalse(Cson.isName("}"));
-        assertFalse(Cson.isName("#"));
+        inline function assertT(testValue) {
+            assertTrue(Cson.isName(testValue));
+        }
+        inline function assertF(testValue) {
+            assertFalse(Cson.isName(testValue));
+        }
+        assertT("a");
+        assertT("A");
+        assertT("0");
+        assertT("9");
+        assertF(" ");
+        assertF("\t");
+        assertF("\n");
+        assertF("\r");
+        assertF(",");
+        assertF(":");
+        assertF("=");
+        assertF("\"");
+        assertF("\'");
+        assertF("[");
+        assertF("{");
+        assertF("]");
+        assertF("}");
+        assertF("#");
     }
     public function testIsWS() {
         assertTrue(Cson.isWS(" "));
@@ -90,12 +96,15 @@ class Test extends TestCase {
         assertFalse(Cson.isEndOfBracket(")"));
     }
     public function testStringToLiteral() {
-        assertEquals("", Cson.stringToLiteral(""));
-        assertEquals("\\t", Cson.stringToLiteral("\t"));
-        assertEquals("a\\t", Cson.stringToLiteral("a\t"));
-        assertEquals("a\\t\\t", Cson.stringToLiteral("a\t\t"));
-        assertEquals("a\\tb\\t", Cson.stringToLiteral("a\tb\t"));
-        assertEquals("\\\"", Cson.stringToLiteral("\""));
+        inline function assert(testValue, expected) {
+            assertEquals(expected, Cson.stringToLiteral(testValue));
+        }
+        assert("", "");
+        assert("\t", "\\t");
+        assert("a\t", "a\\t");
+        assert("a\t\t", "a\\t\\t");
+        assert("a\tb\t", "a\\tb\\t");
+        assert("\"", "\\\"");
     }
     public function testTokenize() {
         inline function assert(testValue, expected) {
