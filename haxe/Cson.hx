@@ -80,7 +80,21 @@ class Cson {
 
     static #if test public #end function
     tokenize(text: String): Array<String> {
-        return ["TODO"];
+        var tokens: Array<String> = [];
+        var prevChar, currentChar, nextChar;
+        var i: Int = -1;
+        var length = text.length;
+        while (++i < length) {
+            currentChar = charAt(text, i);
+            prevChar = charAt(text, i - 1);
+            nextChar = charAt(text, i + 1);
+            if (isBracket(currentChar)) tokens.push(currentChar);
+            else if (currentChar == "," || currentChar == "\n") continue;
+            else if (isCRLF(currentChar, nextChar)) ++i;
+            else if (isNameSeparator(currentChar)) tokens.push(":");
+            else "TODO";
+        }
+        return tokens;
     }
 
     public static function toJson(text: String, indent: Int): String {
