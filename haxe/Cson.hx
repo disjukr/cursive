@@ -45,6 +45,11 @@ class Cson {
     }
 
     static #if test public #else inline #end function
+    isQuote(char: String): Bool {
+        return char == "\"" || char == "\'";
+    }
+
+    static #if test public #else inline #end function
     isBeginOfBracket(char: String): Bool {
         return char == "[" || char == "{";
     }
