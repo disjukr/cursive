@@ -127,6 +127,16 @@ class Test extends TestCase {
             else
                 assertEquals(expected, actual);
         }
+        assert("\'\'", ["\"\""]);
+        assert("\'a\'", ["\"a\""]);
+        assert("\'\"a\'", ["\"\\\"a\""]);
+        assert("\"\"", ["\"\""]);
+        assert("\"a\"", ["\"a\""]);
+        assert("\"\\\"a\"", ["\"\\\"a\""]);
+        assert("\'a\' \'b\'", ["\"a\"", "\"b\""]);
+        assert("\"a\" \'b\'", ["\"a\"", "\"b\""]);
+        assert("\'a\' \"b\"", ["\"a\"", "\"b\""]);
+        assert("\"a\" \"b\"", ["\"a\"", "\"b\""]);
         assert("true", ["true"]);
     }
 }

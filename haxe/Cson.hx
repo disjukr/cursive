@@ -92,6 +92,46 @@ class Cson {
             else if (currentChar == "," || currentChar == "\n") continue;
             else if (isCRLF(currentChar, nextChar)) ++i;
             else if (isNameSeparator(currentChar)) tokens.push(":");
+            else if (isQuote(currentChar)) {
+                var escapeCount: Int = 0;
+                var isSQuote = currentChar == "\'";
+                var from = i;
+                inline function nextChar() {
+                    currentChar = charAt(text, ++i);
+                    prevChar = charAt(text, i - 1);
+                }
+                nextChar();
+                if (isSQuote) {
+                    var buffer: StringBuf = new StringBuf();
+                    while (!isEndOfSQuote(prevChar, currentChar) &&
+                           i < length) {
+                        if (currentChar == "\"" && (escapeCount % 2) == 0)
+                            buffer.add("\\");
+                        buffer.add(currentChar);
+                        escapeCount = if (currentChar == "\\") escapeCount + 1
+                                      else 0;
+                        nextChar();
+                    }
+                    tokens.push("\"" + buffer.toString() + "\"");
+                }
+                else {
+                    while (!isEndOfDQuote(prevChar, currentChar) && i < length)
+                        nextChar();
+                    #if cpp
+                    // currently `Utf8.sub()` has a problem in cpp target
+                    // https://github.com/HaxeFoundation/haxe/issues/2268
+                    tokens.push(function (): String {
+                        var array: Array<Int> = untyped
+                            __global__.__hxcpp_utf8_string_to_char_array(text);
+                        var sub = array.splice(from, i - from + 1);
+                        return untyped
+                            __global__.__hxcpp_char_array_to_utf8_string(sub);
+                    }());
+                    #else
+                    tokens.push(text.sub(from, i - from + 1));
+                    #end
+                }
+            }
             else "TODO";
         }
         return tokens;
