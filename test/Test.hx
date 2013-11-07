@@ -79,6 +79,11 @@ class Test extends TestCase {
         assertFalse(Cson.isEndOfSQuote("a", "a"));
         assertFalse(Cson.isEndOfSQuote("\\", "a"));
     }
+    public function testIsQuote() {
+        assertTrue(Cson.isQuote("\""));
+        assertTrue(Cson.isQuote("\'"));
+        assertFalse(Cson.isQuote("`"));
+    }
     public function testIsBeginOfBracket() {
         assertTrue(Cson.isBeginOfBracket("["));
         assertTrue(Cson.isBeginOfBracket("{"));
