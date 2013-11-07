@@ -100,6 +100,14 @@ class Test extends TestCase {
         assertFalse(Cson.isEndOfBracket("("));
         assertFalse(Cson.isEndOfBracket(")"));
     }
+    public function isBracket() {
+        assertTrue(Cson.isBracket("["));
+        assertTrue(Cson.isBracket("{"));
+        assertTrue(Cson.isBracket("]"));
+        assertTrue(Cson.isBracket("}"));
+        assertFalse(Cson.isBracket("("));
+        assertFalse(Cson.isBracket(")"));
+    }
     public function testStringToLiteral() {
         inline function assert(testValue, expected) {
             assertEquals(expected, Cson.stringToLiteral(testValue));
