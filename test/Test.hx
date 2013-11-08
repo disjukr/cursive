@@ -137,6 +137,14 @@ class Test extends TestCase {
         assert("\"a\" \'b\'", ["\"a\"", "\"b\""]);
         assert("\'a\' \"b\"", ["\"a\"", "\"b\""]);
         assert("\"a\" \"b\"", ["\"a\"", "\"b\""]);
+        assert("|a", ["\"a\""]);
+        assert("|a\n|b", ["\"a\\nb\""]);
+        assert("|a\n|b\n|c", ["\"a\\nb\\nc\""]);
+        assert("|a\n |b", ["\"a\\nb\""]);
+        assert("|a\n  |b", ["\"a\\nb\""]);
+        assert("|abc\n  |def", ["\"abc\\ndef\""]);
+        assert("|abc\n  |def\n", ["\"abc\\ndef\""]);
+        assert("|abc\n  |def\n\n|a", ["\"abc\\ndef\"", "\"a\""]);
         assert("true", ["true"]);
     }
 }

@@ -75,11 +75,22 @@ class Cson {
     static #if test public #end inline function
     charAt(text: String, index: Int): String {
         var code: Null<Int> = text.charCodeAt(index);
-        return if (code == null) null else String.fromCharCode(code);
+        return if (code == null) "" else String.fromCharCode(code);
     }
 
     static #if test public #end function
     tokenize(text: String): Array<String> {
+        #if cpp
+        // currently `Utf8.sub()` has a problem in cpp target
+        // https://github.com/HaxeFoundation/haxe/issues/2268
+        inline function sub(text, pos, len): String {
+            var array: Array<Int> = untyped
+                __global__.__hxcpp_utf8_string_to_char_array(text);
+            var sub = array.splice(pos, len);
+            return untyped
+                __global__.__hxcpp_char_array_to_utf8_string(sub);
+        }
+        #end
         var tokens: Array<String> = [];
         var prevChar, currentChar, nextChar;
         var i: Int = -1;
@@ -117,20 +128,51 @@ class Cson {
                 else {
                     while (!isEndOfDQuote(prevChar, currentChar) && i < length)
                         nextChar();
-                    #if cpp
-                    // currently `Utf8.sub()` has a problem in cpp target
-                    // https://github.com/HaxeFoundation/haxe/issues/2268
-                    tokens.push(function (): String {
-                        var array: Array<Int> = untyped
-                            __global__.__hxcpp_utf8_string_to_char_array(text);
-                        var sub = array.splice(from, i - from + 1);
-                        return untyped
-                            __global__.__hxcpp_char_array_to_utf8_string(sub);
-                    }());
-                    #else
-                    tokens.push(text.sub(from, i - from + 1));
-                    #end
+                    tokens.push(#if cpp sub(text,
+                                #else text.sub( #end from, i - from + 1));
                 }
+            }
+            else if (currentChar == "|") {
+                var buffer: Array<String> = [];
+                var exit;
+                var from;
+                inline function startLine() {
+                    exit = false;
+                    from = i + 1;
+                }
+                inline function push() {
+                    buffer.push(stringToLiteral(#if cpp sub(text,
+                        #else text.sub( #end from, i - from)));
+                    exit = true;
+                }
+                startLine();
+                while (i < length) {
+                    currentChar = charAt(text, ++i);
+                    nextChar = charAt(text, i + 1);
+                    if (exit) {
+                        if (currentChar == "|") {
+                            startLine();
+                            continue;
+                        }
+                        else if (isCRLF(currentChar, nextChar)) {
+                            ++i;
+                            break;
+                        }
+                        else if (currentChar == "\n") break;
+                        else if (!isWS(currentChar)) {
+                            --i;
+                            break;
+                        }
+                    }
+                    else if (isCRLF(currentChar, nextChar)) {
+                        push();
+                        ++i;
+                    }
+                    else if (currentChar == "\n")
+                        push();
+                }
+                if (!exit) push();
+                tokens.push("\"" + buffer.join("\\n") + "\"");
             }
             else "TODO";
         }
