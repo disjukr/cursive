@@ -9,7 +9,7 @@ class Cson {
     static inline var BACKSPACE: String = String.fromCharCode(8);
     static inline var FORM_FEED: String = String.fromCharCode(12);
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isName(char: String): Bool {
         return if (isWS(char)) false else switch (char) {
         case ",", ":", "=", "\"", "\'", "[", "{", "]", "}", "#":
@@ -19,52 +19,52 @@ class Cson {
         }
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isWS(char: String): Bool {
         return char.isSpace(0);
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isCRLF(char: String, nextChar: String): Bool {
         return char == "\r" && nextChar == "\n";
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isNameSeparator(char: String): Bool {
         return char == ":" || char == "=";
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isEndOfDQuote(prevChar: String, char: String): Bool {
         return prevChar != "\\" && char == "\"";
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isEndOfSQuote(prevChar: String, char: String): Bool {
         return prevChar != "\\" && char == "\'";
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isQuote(char: String): Bool {
         return char == "\"" || char == "\'";
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isBeginOfBracket(char: String): Bool {
         return char == "[" || char == "{";
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isEndOfBracket(char: String): Bool {
         return char == "]" || char == "}";
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     isBracket(char: String): Bool {
         return isBeginOfBracket(char) || isEndOfBracket(char);
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     stringToLiteral(string: String): String {
         return string.replace("\\", "\\\\").replace(BACKSPACE, "\\b")
                      .replace(FORM_FEED, "\\f").replace("\n", "\\n")
@@ -72,7 +72,7 @@ class Cson {
                      .replace("\"", "\\\"");
     }
 
-    static #if test public #else inline #end function
+    static #if test public #end inline function
     charAt(text: String, index: Int): String {
         var code: Null<Int> = text.charCodeAt(index);
         return if (code == null) null else String.fromCharCode(code);
