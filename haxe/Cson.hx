@@ -100,7 +100,7 @@ class Cson {
             prevChar = charAt(text, i - 1);
             nextChar = charAt(text, i + 1);
             if (isBracket(currentChar)) tokens.push(currentChar);
-            else if (currentChar == "," || currentChar == "\n") continue;
+            else if (isWS(currentChar) || currentChar == ",") continue;
             else if (isCRLF(currentChar, nextChar)) ++i;
             else if (isNameSeparator(currentChar)) tokens.push(":");
             else if (isQuote(currentChar)) {
