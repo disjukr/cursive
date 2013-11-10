@@ -150,6 +150,9 @@ class Test extends TestCase {
         assert("|abc\n  |def", ["\"abc\\ndef\""]);
         assert("|abc\n  |def\n", ["\"abc\\ndef\""]);
         assert("|abc\n  |def\n\n|a", ["\"abc\\ndef\"", "\"a\""]);
+        assert("[#comment]", ["["]);
+        assert("[#comment]\n]", ["[", "]"]);
+        assert("[#comment]\r\n]", ["[", "]"]);
         assert("true", ["true"]);
     }
 }

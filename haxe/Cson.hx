@@ -174,6 +174,17 @@ class Cson {
                 if (!exit) push();
                 tokens.push("\"" + buffer.join("\\n") + "\"");
             }
+            else if (currentChar == "#") {
+                while (i < text.length) {
+                    currentChar = charAt(text, ++i);
+                    nextChar = charAt(text, i + 1);
+                    if (currentChar == "\n") break;
+                    else if (isCRLF(currentChar, nextChar)) {
+                        ++i;
+                        break;
+                    }
+                }
+            }
             else "TODO";
         }
         return tokens;
