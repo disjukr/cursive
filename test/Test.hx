@@ -2,6 +2,8 @@ import haxe.Cson;
 import haxe.unit.TestCase;
 import haxe.unit.TestRunner;
 
+using Reflect;
+
 class Test extends TestCase {
     public function new() {
         super();
@@ -11,14 +13,49 @@ class Test extends TestCase {
         runner.add(new Test());
         runner.run();
     }
+    inline function type(a: Dynamic): String {
+        return if (Type.getClass(a) == Array) "array";
+            else if (Type.getClass(a) == String) "string";
+            else if (a.isObject()) "object";
+            else "etc";
+    }
+    inline function compareType(a: Dynamic, b: Dynamic): Bool {
+        return type(a) == type(b);
+    }
     inline function compareArray(a: Array<Dynamic>, b: Array<Dynamic>): Bool {
         var eq = true;
         if (a.length != b.length)
             eq = false;
-        for (i in 0...a.length)
-            if (a[i] != b[i])
+        else for (i in 0...a.length) {
+            if (!compare(a[i], b[i])) {
                 eq = false;
+                break;
+            }
+        }
         return eq;
+    }
+    inline function compareObject(a: Dynamic, b: Dynamic): Bool {
+        var eq = true;
+        var fields = a.fields();
+        if (fields.length != b.fields().length)
+            eq = false;
+        else for (field in fields.iterator()) {
+            if (!compare(a.field(field), b.field(field))) {
+                eq = false;
+                break;
+            }
+        }
+        return eq;
+    }
+    inline function compare(a: Dynamic, b: Dynamic): Bool {
+        return if (compareType(a, b)) {
+            switch (type(a)) {
+            case "array": compareArray(a, b);
+            case "object": compareObject(a, b);
+            default: a == b;
+            }
+        }
+        else false;
     }
     public function testIsName() {
         inline function assertT(testValue) {
@@ -165,5 +202,57 @@ class Test extends TestCase {
         assert("[{1, true\n \"DQuote\" \'SQuote\' |verbatim\n|string\n\n}]",
             ["[", "{", "1", "true", "\"DQuote\"", "\"SQuote\"",
              "\"verbatim\\nstring\"", "}", "]"]);
+    }
+    public function testToJson() {
+        inline function assert(testValue, expected) {
+            assertEquals(expected, Cson.toJson(testValue));
+        }
+        assert("0", "0");
+        assert("1\n", "1");
+        assert("true", "true");
+        assert("\"string\"", "\"string\"");
+        assert("|verbatim\n|string", "\"verbatim\\nstring\"");
+        assert("a = 1\nb = 2", "{\"a\":1,\"b\":2}");
+        assertEquals("{\n  \"a\": 1,\n  \"b\": 2\n}",
+            Cson.toJson("a = 1, b = 2", 2));
+    }
+    public function testParse() {
+        inline function assert(testValue, expected: Dynamic) {
+            var actual = Cson.parse(testValue);
+            if (compare(expected, actual))
+                assertTrue(true);
+            else
+                assertEquals(expected, actual);
+        }
+        assert("true", true);
+        assert("false", false);
+        assert("null", null);
+        assert("0", 0);
+        assert("1", 1);
+        assert("10", 10);
+        assert("-1", -1);
+        assert("-1.23e45", -1.23e45);
+        assert("\"\"", "");
+        assert("\'\'", "");
+        assert("\"\'\"", "\'");
+        assert("\'\"\'", "\"");
+        assert("[]", []);
+        assert("[0]", [0]);
+        assert("[0, 1]", [0, 1]);
+        assert("[true, null, 0, \'string\']", [true, null, 0, "string"]);
+        assert("[1, 2, 3, ]", [1, 2, 3]);
+        assert("1, 2", [1, 2]);
+        assert("3, 4, ", [3, 4]);
+        assert("true\nfalse", [true, false]);
+        assert("{}", {});
+        assert("{\"a\": 0}", {a: 0});
+        assert("{\'b\': true}", {b: true});
+        assert("{c: null}", {c: null});
+        assert("d: \"string\"", {d: "string"});
+        assert("e = []", {e: []});
+        assert("a = 1, b = true, c = null, d = 'string', e = [], f = {}",
+            {a: 1, b: true, c: null, d: "string", e: [], f: {}});
+        assert("nested = [[[]], [[], []], []]",
+            {nested: [[[]], [[], []], []]});
     }
 }

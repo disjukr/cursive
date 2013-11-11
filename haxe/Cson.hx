@@ -74,8 +74,11 @@ class Cson {
 
     static #if test public #end inline function
     charAt(text: String, index: Int): String {
-        var code: Null<Int> = text.charCodeAt(index);
-        return if (code == null) "" else String.fromCharCode(code);
+        return if (text != null) {
+                var code: Null<Int> = text.charCodeAt(index);
+                if (code == null) "" else String.fromCharCode(code);
+            }
+            else "";
     }
 
     static #if test public #end function
@@ -204,12 +207,73 @@ class Cson {
         return tokens;
     }
 
-    public static function toJson(text: String, indent: Int): String {
-        return "TODO";
+    public static function toJson(text: String, indent: Int = 0): String {
+        var tokens = tokenize(text);
+        var indentLevel = 0;
+        var doIndent = if (indent == 0) false else true;
+        inline function newline(): String {
+            var indentCount: Int = cast Math.max(indent * indentLevel + 1, 0);
+            var indentBuffer = "";
+            for (i in 0...indentCount - 1)
+                indentBuffer += " ";
+            return "\n" + indentBuffer;
+        }
+        if (!isBeginOfBracket(tokens[0])) {
+            var second = tokens[1];
+            if (second != null) {
+                if (second == ":") {
+                    tokens.unshift("{");
+                    tokens.push("}");
+                }
+                else {
+                    tokens.unshift("[");
+                    tokens.push("]");
+                }
+            }
+        }
+        for (i in 0...tokens.length) {
+            var token = tokens[i];
+            var first = charAt(token, 0);
+            var nextToken = tokens[i + 1];
+            var nextFirst = charAt(nextToken, 0);
+            if (doIndent) {
+                if (token == ":") tokens[i] += " ";
+                if (isBeginOfBracket(first)) ++indentLevel;
+                if (isEndOfBracket(first)) --indentLevel;
+            }
+            if (isName(first) && nextToken == ":")
+                tokens[i] = "\"" + token + "\"";
+            if ((!isBeginOfBracket(first) && first != ":") &&
+                nextToken != null &&
+                (!isEndOfBracket(nextFirst) && nextFirst != ":")) {
+                tokens[i] += ",";
+                if (doIndent) tokens[i] += newline();
+            }
+        }
+        if (doIndent) {
+            for (i in 0...tokens.length) {
+                var token = tokens[i];
+                var prevToken = tokens[i - 1];
+                var nextToken = tokens[i + 1];
+                var first = charAt(token, 0);
+                if (isBeginOfBracket(first)) {
+                    ++indentLevel;
+                    if ((nextToken != "") &&
+                        !isEndOfBracket(charAt(nextToken, 0)))
+                        tokens[i] += newline();
+                }
+                if (isEndOfBracket(first)) {
+                    --indentLevel;
+                    if ((prevToken != "") &&
+                        !isBeginOfBracket(charAt(prevToken, 0)))
+                        tokens[i] = newline() + token;
+                }
+            }
+        }
+        return tokens.join("");
     }
 
-    public static function parse(text: String): Dynamic {
-        "TODO";
-        return Json.parse(text);
+    public static function parse(csonString: String): Dynamic {
+        return Json.parse(toJson(csonString));
     }
 }
