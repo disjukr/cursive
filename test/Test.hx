@@ -153,6 +153,17 @@ class Test extends TestCase {
         assert("[#comment]", ["["]);
         assert("[#comment]\n]", ["[", "]"]);
         assert("[#comment]\r\n]", ["[", "]"]);
+        assert("0", ["0"]);
+        assert("0 1 2 3", ["0", "1", "2", "3"]);
         assert("true", ["true"]);
+        assert("true false null", ["true", "false", "null"]);
+        assert("true false null ", ["true", "false", "null"]);
+        assert("1.23e-1", ["1.23e-1"]);
+        assert("1.23e-1 0.123e1", ["1.23e-1", "0.123e1"]);
+        assert("1.23e-1 0.123e+1", ["1.23e-1", "0.123e+1"]);
+        assert("1.23e-1 0.123e+1 ", ["1.23e-1", "0.123e+1"]);
+        assert("[{1, true\n \"DQuote\" \'SQuote\' |verbatim\n|string\n\n}]",
+            ["[", "{", "1", "true", "\"DQuote\"", "\"SQuote\"",
+             "\"verbatim\\nstring\"", "}", "]"]);
     }
 }

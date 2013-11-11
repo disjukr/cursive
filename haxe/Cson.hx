@@ -99,6 +99,14 @@ class Cson {
             currentChar = charAt(text, i);
             prevChar = charAt(text, i - 1);
             nextChar = charAt(text, i + 1);
+            inline function updatePrev() {
+                currentChar = charAt(text, ++i);
+                prevChar = charAt(text, i - 1);
+            }
+            inline function updateNext() {
+                currentChar = charAt(text, ++i);
+                nextChar = charAt(text, i + 1);
+            }
             if (isBracket(currentChar)) tokens.push(currentChar);
             else if (isWS(currentChar) || currentChar == ",") continue;
             else if (isCRLF(currentChar, nextChar)) ++i;
@@ -107,11 +115,7 @@ class Cson {
                 var escapeCount: Int = 0;
                 var isSQuote = currentChar == "\'";
                 var from = i;
-                inline function nextChar() {
-                    currentChar = charAt(text, ++i);
-                    prevChar = charAt(text, i - 1);
-                }
-                nextChar();
+                updatePrev();
                 if (isSQuote) {
                     var buffer: StringBuf = new StringBuf();
                     while (!isEndOfSQuote(prevChar, currentChar) &&
@@ -121,13 +125,13 @@ class Cson {
                         buffer.add(currentChar);
                         escapeCount = if (currentChar == "\\") escapeCount + 1
                                       else 0;
-                        nextChar();
+                        updatePrev();
                     }
                     tokens.push("\"" + buffer.toString() + "\"");
                 }
                 else {
                     while (!isEndOfDQuote(prevChar, currentChar) && i < length)
-                        nextChar();
+                        updatePrev();
                     tokens.push(#if cpp sub(text,
                                 #else text.sub( #end from, i - from + 1));
                 }
@@ -147,8 +151,7 @@ class Cson {
                 }
                 startLine();
                 while (i < length) {
-                    currentChar = charAt(text, ++i);
-                    nextChar = charAt(text, i + 1);
+                    updateNext();
                     if (exit) {
                         if (currentChar == "|") {
                             startLine();
@@ -176,8 +179,7 @@ class Cson {
             }
             else if (currentChar == "#") {
                 while (i < text.length) {
-                    currentChar = charAt(text, ++i);
-                    nextChar = charAt(text, i + 1);
+                    updateNext();
                     if (currentChar == "\n") break;
                     else if (isCRLF(currentChar, nextChar)) {
                         ++i;
@@ -185,7 +187,19 @@ class Cson {
                     }
                 }
             }
-            else "TODO";
+            else {
+                if (!isName(nextChar)) {
+                    tokens.push(currentChar);
+                    continue;
+                }
+                var from = i;
+                while (i < text.length) {
+                    updateNext();
+                    if (!isName(nextChar)) break;
+                }
+                tokens.push(#if cpp sub(text,
+                            #else text.sub( #end from, i - from + 1));
+            }
         }
         return tokens;
     }
