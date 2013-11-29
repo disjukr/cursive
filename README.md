@@ -1,6 +1,8 @@
 cursive
 =======
 
+[![travis](https://travis-ci.org/disjukr/cursive.png)](https://travis-ci.org/disjukr/cursive)
+
 [CSON(cursive script object notation)][cson] implement for [haxe][haxe].
 
 [cson]: https://github.com/lifthrasiir/cson
