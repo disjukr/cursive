@@ -1,0 +1,20 @@
+language: node_js
+
+node_js:
+  - "0.10"
+
+before_install:
+  - sudo add-apt-repository ppa:eyecreate/haxe -y
+  - sudo apt-get update
+  - sudo apt-get install haxe -y --force-yes
+  - sudo apt-get install gcc-multilib g++-multilib -y
+  - haxelib setup ~/haxelib
+  - haxelib install hxcpp
+
+script:
+  - haxe test.hxml
+
+notifications:
+  irc:
+    channels:
+      - "irc.ozinger.org#studio321"
