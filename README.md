@@ -54,6 +54,26 @@ that is converted to JSON like this:
 [json]: http://json.org/
 
 
+How to use?
+-----------
+`haxelib install cursive` to install.
+
+`haxe test.hxml` to test.
+
+usage:
+```haxe
+import haxe.Cson;
+
+class Main {
+    public static function main() {
+        var text = "a = 1, b = 2"; // 1. write cson
+        trace(Cson.toJson(text)); // 2. ????
+        trace(Cson.parse(text)); // 3. profit!
+    }
+}
+```
+
+
 License
 -------
 
