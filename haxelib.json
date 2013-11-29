@@ -1,0 +1,10 @@
+{
+  "name": "cursive",
+  "url": "https://github.com/disjukr/cursive",
+  "license": "MIT",
+  "tags": ["cross", "utility"],
+  "description": "cson for haxe",
+  "version": "0.1.0",
+  "releasenote": "Initial release",
+  "contributors": ["disjukr"]
+}
