@@ -74,11 +74,13 @@ class Cson {
 
     static #if test public #end inline function
     charAt(text: String, index: Int): String {
-        return if (text != null) {
+        return if (text == null ||
+                   0 > index ||
+                   index >= Utf8.length(text)) ""
+            else {
                 var code: Null<Int> = Utf8.charCodeAt(text, index);
                 if (code == null) "" else String.fromCharCode(code);
             }
-            else "";
     }
 
     static #if test public #end function
