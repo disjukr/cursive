@@ -57,6 +57,13 @@ class Test extends TestCase {
         }
         else false;
     }
+    inline function assertTokenize(testValue, expected) {
+        var actual = Cson.tokenize(testValue);
+        if (compareArray(expected, actual))
+            assertTrue(true);
+        else
+            assertEquals(expected, actual);
+    }
     public function testIsName() {
         inline function assertT(testValue) {
             assertTrue(Cson.isName(testValue));
@@ -157,49 +164,42 @@ class Test extends TestCase {
         assert("\"", "\\\"");
     }
     public function testTokenize() {
-        inline function assert(testValue, expected) {
-            var actual = Cson.tokenize(testValue);
-            if (compareArray(expected, actual))
-                assertTrue(true);
-            else
-                assertEquals(expected, actual);
-        }
-        assert("[", ["["]);
-        assert("}", ["}"]);
-        assert("[{}]", ["[", "{", "}", "]"]);
-        assert("[ { } ]", ["[", "{", "}", "]"]);
-        assert("[,{,},]", ["[", "{", "}", "]"]);
-        assert("\'\'", ["\"\""]);
-        assert("\'a\'", ["\"a\""]);
-        assert("\'\"a\'", ["\"\\\"a\""]);
-        assert("\"\"", ["\"\""]);
-        assert("\"a\"", ["\"a\""]);
-        assert("\"\\\"a\"", ["\"\\\"a\""]);
-        assert("\'a\' \'b\'", ["\"a\"", "\"b\""]);
-        assert("\"a\" \'b\'", ["\"a\"", "\"b\""]);
-        assert("\'a\' \"b\"", ["\"a\"", "\"b\""]);
-        assert("\"a\" \"b\"", ["\"a\"", "\"b\""]);
-        assert("|a", ["\"a\""]);
-        assert("|a\n|b", ["\"a\\nb\""]);
-        assert("|a\n|b\n|c", ["\"a\\nb\\nc\""]);
-        assert("|a\n |b", ["\"a\\nb\""]);
-        assert("|a\n  |b", ["\"a\\nb\""]);
-        assert("|abc\n  |def", ["\"abc\\ndef\""]);
-        assert("|abc\n  |def\n", ["\"abc\\ndef\""]);
-        assert("|abc\n  |def\n\n|a", ["\"abc\\ndef\"", "\"a\""]);
-        assert("[#comment]", ["["]);
-        assert("[#comment]\n]", ["[", "]"]);
-        assert("[#comment]\r\n]", ["[", "]"]);
-        assert("0", ["0"]);
-        assert("0 1 2 3", ["0", "1", "2", "3"]);
-        assert("true", ["true"]);
-        assert("true false null", ["true", "false", "null"]);
-        assert("true false null ", ["true", "false", "null"]);
-        assert("1.23e-1", ["1.23e-1"]);
-        assert("1.23e-1 0.123e1", ["1.23e-1", "0.123e1"]);
-        assert("1.23e-1 0.123e+1", ["1.23e-1", "0.123e+1"]);
-        assert("1.23e-1 0.123e+1 ", ["1.23e-1", "0.123e+1"]);
-        assert("[{1, true\n \"DQuote\" \'SQuote\' |verbatim\n|string\n\n}]",
+        assertTokenize("[", ["["]);
+        assertTokenize("}", ["}"]);
+        assertTokenize("[{}]", ["[", "{", "}", "]"]);
+        assertTokenize("[ { } ]", ["[", "{", "}", "]"]);
+        assertTokenize("[,{,},]", ["[", "{", "}", "]"]);
+        assertTokenize("\'\'", ["\"\""]);
+        assertTokenize("\'a\'", ["\"a\""]);
+        assertTokenize("\'\"a\'", ["\"\\\"a\""]);
+        assertTokenize("\"\"", ["\"\""]);
+        assertTokenize("\"a\"", ["\"a\""]);
+        assertTokenize("\"\\\"a\"", ["\"\\\"a\""]);
+        assertTokenize("\'a\' \'b\'", ["\"a\"", "\"b\""]);
+        assertTokenize("\"a\" \'b\'", ["\"a\"", "\"b\""]);
+        assertTokenize("\'a\' \"b\"", ["\"a\"", "\"b\""]);
+        assertTokenize("\"a\" \"b\"", ["\"a\"", "\"b\""]);
+        assertTokenize("|a", ["\"a\""]);
+        assertTokenize("|a\n|b", ["\"a\\nb\""]);
+        assertTokenize("|a\n|b\n|c", ["\"a\\nb\\nc\""]);
+        assertTokenize("|a\n |b", ["\"a\\nb\""]);
+        assertTokenize("|a\n  |b", ["\"a\\nb\""]);
+        assertTokenize("|abc\n  |def", ["\"abc\\ndef\""]);
+        assertTokenize("|abc\n  |def\n", ["\"abc\\ndef\""]);
+        assertTokenize("|abc\n  |def\n\n|a", ["\"abc\\ndef\"", "\"a\""]);
+        assertTokenize("[#comment]", ["["]);
+        assertTokenize("[#comment]\n]", ["[", "]"]);
+        assertTokenize("[#comment]\r\n]", ["[", "]"]);
+        assertTokenize("0", ["0"]);
+        assertTokenize("0 1 2 3", ["0", "1", "2", "3"]);
+        assertTokenize("true", ["true"]);
+        assertTokenize("true false null", ["true", "false", "null"]);
+        assertTokenize("true false null ", ["true", "false", "null"]);
+        assertTokenize("1.23e-1", ["1.23e-1"]);
+        assertTokenize("1.23e-1 0.123e1", ["1.23e-1", "0.123e1"]);
+        assertTokenize("1.23e-1 0.123e+1", ["1.23e-1", "0.123e+1"]);
+        assertTokenize("1.23e-1 0.123e+1 ", ["1.23e-1", "0.123e+1"]);
+        assertTokenize("[{1, true\n \"DQuote\" \'SQuote\' |verbatim\n|string\n\n}]",
             ["[", "{", "1", "true", "\"DQuote\"", "\"SQuote\"",
              "\"verbatim\\nstring\"", "}", "]"]);
     }
@@ -254,5 +254,10 @@ class Test extends TestCase {
             {a: 1, b: true, c: null, d: "string", e: [], f: {}});
         assert("nested = [[[]], [[], []], []]",
             {nested: [[[]], [[], []], []]});
+    }
+    public function testUnicode() {
+        assertTokenize("한글", ["한글"]);
+        assertTokenize("한글: |문자열\nalphabet: |string",
+            ["한글", ":", "\"문자열\"", "alphabet", ":", "\"string\""]);
     }
 }
