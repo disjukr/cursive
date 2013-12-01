@@ -97,7 +97,7 @@ class Cson {
         var tokens: Array<String> = [];
         var prevChar, currentChar, nextChar;
         var i: Int = -1;
-        var length = text.length;
+        var length = Utf8.length(text);
         while (++i < length) {
             currentChar = charAt(text, i);
             prevChar = charAt(text, i - 1);
