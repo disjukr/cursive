@@ -2,6 +2,8 @@
 
 echo testing $TARGET
 
+mkdir bin
+
 case $TARGET in
     "cpp")
         haxe -cp test -main Test -D test \
