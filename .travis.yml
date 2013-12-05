@@ -1,5 +1,10 @@
 language: node_js
 
+env:
+  - TARGET=cpp
+  - TARGET=neko
+  - TARGET=js
+
 node_js:
   - "0.10"
 
@@ -12,7 +17,7 @@ before_install:
   - haxelib install hxcpp
 
 script:
-  - haxe test.hxml
+  - travis.sh
 
 notifications:
   irc:
