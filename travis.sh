@@ -1,20 +1,24 @@
 #!/bin/sh
 
+echo testing $TARGET
+
 case $TARGET in
     "cpp")
         haxe -cp test -main Test -D test \
-        -cpp bin \
-        -cmd ./bin/Test
+        -cpp bin
+        ./bin/Test
         ;;
     "neko")
         haxe -cp test -main Test -D test \
-        -D neko-source -neko bin/test.n \
-        -cmd neko ./bin/test.n
+        -D neko-source -neko bin/test.n
+        neko ./bin/test.n
         ;;
     "js")
         haxe -cp test -main Test -D test \
-        -js bin/test.js \
-        -cmd node ./bin/test.js
+        -js bin/test.js
+        node ./bin/test.js
         ;;
     *)
+        echo unsupported target
+        ;;
 esac

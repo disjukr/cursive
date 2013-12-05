@@ -5,6 +5,10 @@ env:
   - TARGET=neko
   - TARGET=js
 
+matrix:
+  allow_failures:
+    - env: TARGET=js
+
 node_js:
   - "0.10"
 
@@ -17,7 +21,7 @@ before_install:
   - haxelib install hxcpp
 
 script:
-  - travis.sh
+  - ./travis.sh
 
 notifications:
   irc:
