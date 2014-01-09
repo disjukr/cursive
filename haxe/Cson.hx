@@ -209,15 +209,34 @@ class Cson {
         return tokens;
     }
 
-    public static function toJson(text: String, indent: Int = 0): String {
+    public static function toJson(text: String, indent: Dynamic = 0): String {
         var tokens = tokenize(text);
         var indentLevel = 0;
-        var doIndent = if (indent == 0) false else true;
+        var doIndent = true;
+        if (Std.is(indent, Int) && indent > 0) {
+            var indentCount = indent;
+            indent = "";
+            for (i in 0...indentCount)
+                indent += " ";
+        }
+        else if (Type.getClass(indent) == String) {
+            var indentCount = Std.parseInt(indent);
+            if (indentCount != null) {
+                indent = "";
+                for (i in 0...indentCount)
+                    indent += " ";
+            }
+        }
+        else if (indent == true) {
+            indent = "    ";
+        }
+        else {
+            doIndent = false;
+        }
         inline function newline(): String {
-            var indentCount: Int = cast Math.max(indent * indentLevel + 1, 0);
             var indentBuffer = "";
-            for (i in 0...indentCount - 1)
-                indentBuffer += " ";
+            for (i in 0...indentLevel)
+                indentBuffer += indent;
             return "\n" + indentBuffer;
         }
         if (!isBeginOfBracket(tokens[0])) {

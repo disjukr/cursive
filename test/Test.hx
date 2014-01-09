@@ -260,4 +260,23 @@ class Test extends TestCase {
         assertTokenize("한글: |문자열\nalphabet: |string",
             ["한글", ":", "\"문자열\"", "alphabet", ":", "\"string\""]);
     }
+    public function testIndent() {
+        inline function assert(indent: Dynamic, expected)
+            assertEquals(expected, Cson.toJson("[0]", indent));
+        assert(true, "[\n    0\n]");
+        assert(false, "[0]");
+        assert(0, "[0]");
+        assert(1, "[\n 0\n]");
+        assert(2, "[\n  0\n]");
+        assert(4, "[\n    0\n]");
+        assert(8, "[\n        0\n]");
+        assert("0", "[\n0\n]");
+        assert("1", "[\n 0\n]");
+        assert("2", "[\n  0\n]");
+        assert("4", "[\n    0\n]");
+        assert("8", "[\n        0\n]");
+        assert("\t", "[\n\t0\n]");
+        assert("\t\t", "[\n\t\t0\n]");
+        assert("abcd", "[\nabcd0\n]");
+    }
 }
